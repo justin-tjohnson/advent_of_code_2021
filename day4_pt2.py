@@ -84,15 +84,16 @@ class BingoBoards:
     
     def scan_boards_for_bingo(self):
         #scan through each bingo board
+        winning_bingos = []
         for bingo_board_id, bingo_board in enumerate(self.boolean_board):
             # stop checkinb board if it has already won
             if self.winning_boards[bingo_board_id]:
                 continue
             board_status = self.scan_individual_board_for_bingo(bingo_board)
             if board_status:
-                return board_status, bingo_board_id
+                winning_bingos.append([board_status, bingo_board_id])
             
-        return False, None
+        return winning_bingos
     
     def initialize_boolean_board(self):
         for bingo_board in self.formatted_boards:
@@ -101,7 +102,8 @@ class BingoBoards:
                 boolean_row = [False for _ in row]
                 individual_board.append(boolean_row)
             self.boolean_board.append(individual_board)
-            self.winning_boards.append(False)
+
+        self.winning_boards = [False for _ in self.boolean_board]
         
     def update_boolean_board(self, matching_bingo_coodinates, drawn_number):
 
@@ -139,7 +141,6 @@ class BingoBoards:
             for col_id, col_val in enumerate(row):
                 if not col_val:
                     sum_unmarked += int(winning_bingo_board[row_id][col_id])
-        
         return sum_unmarked * int(last_drawn_number)
 
     def determine_winning_board(self):
@@ -150,22 +151,24 @@ class BingoBoards:
             if matching_bingo_coodinates:
                 self.update_boolean_board(matching_bingo_coodinates, drawn_number)
 
-            winning_board, bingo_board_id = self.scan_boards_for_bingo()
+            winning_bingos = self.scan_boards_for_bingo()
 
-            if winning_board:
-                print(drawn_number, self.winning_boards)
-                print(self.boolean_board)
-                self.winning_boards[bingo_board_id] = winning_board
+            if winning_bingos:
+                for winning_bingo in winning_bingos:
+                    self.winning_boards[winning_bingo[1]] = winning_bingo[0]
+
+                    most_recent_winning_board_id = winning_bingo[1]
 
             
             if all(self.winning_boards):
+                most_recent_winning_board_id = winning_bingo[1]
                 break
-        
-        if all(self.winning_boards):
-            final_score = self.tally_up_final_score(bingo_board_id, drawn_number)
-            return final_score
+
             
         
-
+        # if all(self.winning_boards):
+        final_score = self.tally_up_final_score(most_recent_winning_board_id, drawn_number)
+        return final_score
+            
 bingo_boards = BingoBoards(raw_boards, number_genetator)
 print(f"The final score is {bingo_boards.determine_winning_board()}")
