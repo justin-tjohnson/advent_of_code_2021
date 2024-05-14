@@ -1,7 +1,7 @@
 simulated_list = [3,4,3,1,2]
 days = 18
 
-# taking a different approach since iterating over the list is too every day
+# taking a different approach since iterating over the list every after day
 # is too computationally expensive
 
 class LanternFishSimulation:
@@ -11,13 +11,16 @@ class LanternFishSimulation:
         self.days = days
 
     def fresh_fish_map(self):
+        # initialize fish map.  dict with keys equal to fish age and values
+        # equal to quanity that have each respective timer
         fish_map = {}
         for timer in range(0,9):
             fish_map[timer] = 0
         
         return fish_map
 
-    def update_fish_map(self, fish_map, new_fish):
+    def update_fish_map(self, fish_map):
+        new_fish = 0
         current_fish_map = fish_map.copy()
 
         fish_map = self.fresh_fish_map()
@@ -28,7 +31,6 @@ class LanternFishSimulation:
                 fish_map[6] = current_fish_map[0]
                 new_fish += current_fish_map[0]
 
-    
             else:
                 # subtract day from each fish timer
                 fish_map[timer-1] += current_fish_map[timer]
@@ -41,35 +43,18 @@ class LanternFishSimulation:
 
     def find_fish_growth(self):
 
-        fish_map = {}
-        for timer in range(0,9):
-            fish_map[timer] = 0
-        
         fish_map = self.fresh_fish_map()
 
-        # only look at one fish with each unique timer in input to reduce memory usage
-        current_fish_days = self.simulated_list
-        new_fish = 0
-
-        if 0 in current_fish_days:
-            new_fish = current_fish_days.count(0)
+        # add curent list of fish timers to fish map
+        for fish_timer in self.simulated_list:
+            fish_map[fish_timer] += 1
+        
 
         # each iteration is calculating the final state after the day specified
         for _ in range(self.days):
-
-            fish_map, new_fish = self.update_fish_map(fish_map, new_fish)
-
-            # subtract one day from all fish timers
-            current_fish_days = [6 if timer == 0 else timer-1 for timer in current_fish_days]
-
-            # count number of zeros in list, this will determine number of fish to be
-            # generated
-            if 0 in current_fish_days:
-                new_fish = current_fish_days.count(0)
-            else:
-                new_fish = 0
+            fish_map, _ = self.update_fish_map(fish_map)
     
-        return len(current_fish_days) + sum(fish_map.values())
+        return sum(fish_map.values())
 
 
 lantern_fish = LanternFishSimulation(simulated_list, days)
