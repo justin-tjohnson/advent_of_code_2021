@@ -7,6 +7,35 @@ A-end
 b-end"""
 
 
+
+raw_input = """ex-NL
+ex-um
+ql-wv
+VF-fo
+VF-ql
+start-VF
+end-tg
+wv-ZQ
+wv-um
+NL-start
+lx-ex
+ex-wv
+ex-fo
+sb-start
+um-end
+fo-ql
+NL-sb
+NL-fo
+tg-NL
+VF-sb
+fo-wv
+ex-VF
+ql-sb
+end-wv"""
+
+
+
+
 import copy
 
 class Caves:
@@ -55,6 +84,8 @@ class Caves:
             
             discovered_routes = []
             for route in routes:
+
+                small_cave_visited_twice = False
                 
                 current_node = route[-1]
                 
@@ -71,6 +102,8 @@ class Caves:
                     next_nodes.remove("start")
 
                 for next_node in next_nodes:
+
+                    small_cave_visited_twice = None
                     
                     local_route = copy.deepcopy(route)
                     
@@ -79,8 +112,20 @@ class Caves:
                     small_cave = next_node.islower()
                     
                     if small_cave and next_node in route:
-                        continue
-                    
+                        
+                        for cave_visited in local_route:
+                            if local_route.count(cave_visited) == 2 and cave_visited.islower():
+                                small_cave_visited_twice = True
+                        
+                        # if small cave has already been visited twice, then can't go to any 
+                        # more small caves
+                        if small_cave_visited_twice:
+                            continue
+
+                        else:
+                            local_route.append(next_node)
+                            discovered_routes.append(local_route)
+
                     else:
                         local_route.append(next_node)
                         discovered_routes.append(local_route)
@@ -93,25 +138,11 @@ class Caves:
                 # all routes have been found and can exit
                 break
             
-            # Only putting this here to prevent my computer
-            # from getting borked in case of code bug
-            if len(routes) > 1000000:
-                break
-        
         return routes
 
-            
 
 caves = Caves(raw_input)
 
 cave_routes = caves.find_all_iterations()
-
-# debugging purposes
-# formatted_solution = ""
-# for cave_route in cave_routes:
-#     formatted_solution += ",".join(cave_route) + "\n"
-
-# print(formatted_solution)
-
 
 len(cave_routes)
