@@ -131,14 +131,11 @@ class PolymerFormula:
     def find_new_polymer(self, loop_number):
 
         current_polymer = copy.deepcopy(self.template)
-        current_polymer_list = list(current_polymer)
         current_polymer_map = self.create_polymer_map_from_string(self.template)
         print(current_polymer_map)
 
         starting_pair = current_polymer[:2]
         ending_pair = current_polymer[-2:]
-
-        new_polymer_map = {}
 
         loops = list(range(1,loop_number+1))
 
@@ -186,7 +183,7 @@ class PolymerFormula:
 
         return self.create_official_count_dict(current_polymer_map, starting_pair, ending_pair)
 
-   
+
 polymer_formula = PolymerFormula(template, pair_insertions)
 new_formula = polymer_formula.find_new_polymer(40)
 print(most_common_minus_least_common(new_formula))
