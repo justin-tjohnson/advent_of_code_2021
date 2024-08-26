@@ -1237,6 +1237,8 @@ def locate_all_overlapping_coordinates(input):
                 # if combo has already been checked, then don't check it again
                 if (known_scanner_id, unknown_scanner_id) in checked_combos:
                     continue
+
+                checked_combos.append((known_scanner_id, unknown_scanner_id))
                 
                 #already compared to scanner 0 above
                 if known_scanner_id == '0':
@@ -1253,7 +1255,7 @@ def locate_all_overlapping_coordinates(input):
                     all_overlapping_coordinates.extend(overlapping_coordinates)
                     new_discovered_scanners.append(unknown_scanner_id)
                     discovered_scanner_dict[unknown_scanner_id] = transformed_coordinates
-                    checked_combos.append(known_scanner_id, unknown_scanner_id)
+
 
         # print(f"new_discovered_scanners {new_discovered_scanners}")
         for new_discovered_scanner in new_discovered_scanners:
